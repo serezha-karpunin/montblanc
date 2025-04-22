@@ -158,7 +158,7 @@ Mont Blanc is a mountain in the Alps, rising 4,805.59 m (15,766 ft)[1] above sea
   fetch("https://api.github.com/repos/serezha-karpunin/montblanc/contents/images")
     .then((response) => response.json())
     .then(data => {
-      images = data;
+      images = data.sort((a, b) => b.name.localeCompare(a.name));
 
       data.forEach((image, index) => {
         const imgElement = document.createElement('img');
