@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mont blanc</title>
+  <style>
+    body {
+      background: white;
+      color: black;
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+    }
+
+    header {
+      padding: 1em;
+      text-align: center;
+      border-bottom: 2px solid black;
+      font-size: 4em;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .gallery img {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border: 1px solid black;
+      cursor: pointer;
+    }
+
+    .about {
+      padding: 50px 20px;
+      text-align: center;
+      background-color: #f9f9f9;
+      margin-top: 50px;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .about h2 {
+      font-size: 2.5em;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    .about p {
+      font-size: 1.2em;
+      line-height: 1.5;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+      text-transform: uppercase;
+      text-align: justify;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content-container {
+      max-width: 90%;
+      max-height: 90%;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+    }
+
+    .modal-content {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      aspect-ratio: 1 / 1;
+    }
+
+    .modal img {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+    }
+
+    .prev, .next {
+      position: absolute;
+      top: 50%;
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      cursor: pointer;
+      font-size: 24px;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prev { left: 10px; }
+    .next { right: 10px; }
+
+    @media (max-width: 600px) {
+      header {
+        font-size: 3em;
+      }
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .about h2 {
+        font-size: 2em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>mont blanc</header>
+
+<div class="gallery" id="gallery"></div>
+
+<div class="about">
+  <h2>About</h2>
+  <p>
+    Mont Blanc is a mountain in the Alps, rising 4,805.59 m (15,766 ft)[1] above sea level, located right at the Franco-Italian border.[3] It is the highest mountain in Europe outside the Caucasus Mountains, It is the second-most prominent mountain in Europe, after Mount Elbrus in Russia, and the 11th most prominent mountain in the world.
+  </p>
+</div>
+
+<div id="modal" class="modal">
+  <span class="prev" onclick="navigate(-1)">&#10094;</span>
+  <div class="modal-content-container">
+    <img id="modalImage" class="modal-content" src="">
+  </div>
+  <span class="next" onclick="navigate(1)">&#10095;</span>
+</div>
+
+<script>
+  const galleryElement = document.getElementById('gallery');
+  const modal = document.getElementById('modal');
+  const modalImage = document.getElementById('modalImage');
+  let currentIndex = 0;
+
+  // Fetch the image list from the JSON file
+fetch("https://api.github.com/repos/serezha-karpunin/montblanc/contents/images")
+  .then((response) => response.json())
+    .then(data => {
+      const images = data.images;
+      // Create and append image elements dynamically
+      images.forEach((image, index) => {
+        const imgElement = document.createElement('img');
+        imgElement.src = image;
+        imgElement.alt = `Image ${index + 1}`;
+        imgElement.dataset.index = index;
+        galleryElement.appendChild(imgElement);
+
+        imgElement.addEventListener('click', () => {
+          currentIndex = index;
+          modalImage.src = imgElement.src;
+          modal.style.display = 'flex';
+        });
+      });
+    });
+
+  // Close modal when clicked outside the image
+  modal.addEventListener('click', (e) => {
+    if (e.target === modal) {
+      closeModal();
+    }
+  });
+
+  // Close modal function
+  function closeModal() {
+    modal.style.display = 'none';
+  }
+
+  // Navigate between images (next/prev)
+  function navigate(direction) {
+    currentIndex = (currentIndex + direction + images.length) % images.length;
+    modalImage.src = images[currentIndex].src;
+  }
+</script>
+
+</body>
+</html>
