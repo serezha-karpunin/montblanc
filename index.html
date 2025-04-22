@@ -140,7 +140,7 @@
 <div class="about">
   <h2>About</h2>
   <p>
-    Mont Blanc is a mountain in the Alps, rising 4,805.59 m (15,766 ft)[1] above sea level, located right at the Franco-Italian border.[3] It is the highest mountain in Europe outside the Caucasus Mountains, It is the second-most prominent mountain in Europe, after Mount Elbrus in Russia, and the 11th most prominent mountain in the world.
+    Mont Blanc is a mountain in the Alps, rising 4,805.59 m (15,766 ft) above sea level, located right at the Franco-Italian border. It is the highest mountain in Europe outside the Caucasus Mountains. It is the second-most prominent mountain in Europe, after Mount Elbrus in Russia, and the 11th most prominent mountain in the world.
   </p>
 </div>
 
@@ -157,13 +157,14 @@
   const modal = document.getElementById('modal');
   const modalImage = document.getElementById('modalImage');
   let currentIndex = 0;
+  let images = []; // globally accessible image list
 
-  // Fetch the image list from the JSON file
-fetch("https://api.github.com/repos/serezha-karpunin/montblanc/contents/images")
-  .then((response) => response.json())
-    .then(images => {
-      // Create and append image elements dynamically
-      images.forEach((image, index) => {
+  fetch("https://api.github.com/repos/serezha-karpunin/montblanc/contents/images")
+    .then((response) => response.json())
+    .then(data => {
+      images = data;
+
+      data.forEach((image, index) => {
         const imgElement = document.createElement('img');
         imgElement.src = image.download_url;
         imgElement.alt = `Image ${index + 1}`;
@@ -172,28 +173,26 @@ fetch("https://api.github.com/repos/serezha-karpunin/montblanc/contents/images")
 
         imgElement.addEventListener('click', () => {
           currentIndex = index;
-          modalImage.src = imgElement.src;
+          modalImage.src = image.download_url;
           modal.style.display = 'flex';
         });
       });
     });
 
-  // Close modal when clicked outside the image
   modal.addEventListener('click', (e) => {
     if (e.target === modal) {
       closeModal();
     }
   });
 
-  // Close modal function
   function closeModal() {
     modal.style.display = 'none';
   }
 
-  // Navigate between images (next/prev)
   function navigate(direction) {
+    if (!images.length) return;
     currentIndex = (currentIndex + direction + images.length) % images.length;
-    modalImage.src = images[currentIndex].src;
+    modalImage.src = images[currentIndex].download_url;
   }
 </script>
 
