@@ -161,12 +161,11 @@
   // Fetch the image list from the JSON file
 fetch("https://api.github.com/repos/serezha-karpunin/montblanc/contents/images")
   .then((response) => response.json())
-    .then(data => {
-      const images = data.images;
+    .then(images => {
       // Create and append image elements dynamically
       images.forEach((image, index) => {
         const imgElement = document.createElement('img');
-        imgElement.src = image;
+        imgElement.src = image.download_url;
         imgElement.alt = `Image ${index + 1}`;
         imgElement.dataset.index = index;
         galleryElement.appendChild(imgElement);
